@@ -1,0 +1,17 @@
+1. How to compile FlowEr:
+
+1.1
+
+
+application:start(sasl),application:start(gen_listener_tcp),application:start(regine),application:start(flower).          
+flower_simple_switch:start_link().
+flower_tcp_transport:listen(6633,[]).
+
+
+=======================================
+erl -smp -sname SDN -pa ebin/
+=======================================
+sudo mn --controller=remote,ip=192.168.0.102,port=6633
+
+sudo mn --topo=tree,depth=2,fanout=8 --controller=remote,ip=192.168.0.102,port=6633
+
