@@ -81,9 +81,12 @@ handle_call(_Request, _From, State) ->
 %%                                  {stop, Reason, State}
 %% @end
 %%--------------------------------------------------------------------
-handle_cast({{packet, in}, Sw, Msg}, State) ->
+handle_cast({{packet, in}, Sw, {Msg, Conn}}, State) ->
     case Flow = (catch flower_flow:flow_extract(0, Msg#ofp_packet_in.in_port, Msg#ofp_packet_in.data)) of
 	#flow{} ->
+%% AkivaS
+  io:format("~n ----->>flower_simple_switch:handle_cast from ~p ~n",[Conn]), 
+%% AkivaS
 	    %% choose destination...
 	    Port = choose_destination(Flow),
 	    Actions = case Port of

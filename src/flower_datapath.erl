@@ -341,8 +341,8 @@ connected({features_reply, _Version, _Xid, Msg}, State) ->
 connected({echo_request, _Version, Xid, _Msg}, State) ->
     send_pkt(echo_reply, Xid, <<>>, {next_state, connected, State});
 
-connected({packet_in, _Version, _Xid, Msg}, State) ->
-    flower_dispatcher:dispatch({packet, in}, self(), Msg),
+connected({packet_in, _Version, _Xid, {Msg, Conn}}, State) ->
+    flower_dispatcher:dispatch({packet, in}, self(), {Msg, Conn}),
     {next_state, connected, State};
 
 connected({flow_removed, _Version, _Xid, Msg}, State) ->
@@ -471,15 +471,17 @@ handle_info({tcp, Socket, Data}, StateName, #state{socket = Socket} = State) ->
 %%% AkivaS
 %%%===================================================================
     Connection0 = case inet:peername(Socket) of
-        {ok,{IpAddress,Port}} -> {IpAddress,Port};
-%%%          io:format("~n ----->>flower_datapath:handle_info message from ~p ~n",[{IpAddress, Port}]);
+        {ok,{IpAddress,Port}} ->
+          io:format("~n ----->>flower_datapath:handle_info message from ~p ~n",[{IpAddress, Port}]), 
+          {IpAddress,Port};
         {error,Why} ->
           io:format("~n ----->>flower_datapath:handle_info Cannot get information about the sender ~p ~n",[Why]),
-          {0,0}
+          {{0,0,0,0},0}
     end,
+    
    <<IpAsInt:32>> = list_to_binary(tuple_to_list(element(1,Connection0))), 
    Connection1 = {IpAsInt,element(2,Connection0)},
-%%%   io:format("~n ----->>flower_datapath:handle_info message for connection ~p ~n",[ Connection1 ]),
+   io:format("~n ----->>flower_datapath:handle_info message for connection ~p ~n",[ Connection1 ]),
 %%%===================================================================
 %%% AkivaS
 %%%===================================================================
@@ -498,9 +500,11 @@ handle_info({tcp, Socket, Data}, StateName, #state{socket = Socket} = State) ->
 	[First|Next] ->
 	    %% exec first Msg directly....
             MsgToProcess = First#ovs_msg{connection=Connection1},
-io:format("~n ----->>flower_datapath:handle_info message to process ~n ~p ~n",[ MsgToProcess ]),
-	    Reply = exec_sync(First, StateName, State1),
-
+%%% io:format("~n ----->>flower_datapath:handle_info message to process ~n ~p ~n",[ MsgToProcess ]),
+%%	    Reply = exec_sync(First, StateName, State1),
+%% AkivaS
+            Reply = exec_sync(MsgToProcess, StateName, State1),
+%% AkivaS
 	    case element(1, Reply) of
 		%% don't process more message if we got a stop
 		next_state ->
@@ -586,9 +590,12 @@ cancel_timeouts(State = #state{timeouts = TimeOuts}) ->
 		 end, ok, TimeOuts),
     State#state{timeouts = orddict:new()}.
 
-exec_sync(#ovs_msg{version = Version, type = Type, xid = Xid, msg = Msg}, StateName, State) ->
+%%exec_sync(#ovs_msg{version = Version, type = Type, xid = Xid, msg = Msg}, StateName, State) ->
+%% AkivaS
+exec_sync(#ovs_msg{version = Version, type = Type, xid = Xid, msg = Msg, connection = Conn}, StateName, State) ->
+%% AkivaS
     State0 = inc_counter(State, recv, Type),
-    ?MODULE:StateName({Type, Version, Xid, Msg}, State0).
+    ?MODULE:StateName({Type, Version, Xid, {Msg, Conn}}, State0).
 
 exec_async(#ovs_msg{version = Version, type = Type, xid = Xid, msg = Msg}, State) ->
     State0 = inc_counter(State, recv, Type),
