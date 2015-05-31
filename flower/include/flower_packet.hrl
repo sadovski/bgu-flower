@@ -35,7 +35,7 @@
 		     {'port_mod_failed', ofp_error_port_mod_failed_types()} |
 		     {'queue_op_failed', ofp_error_queue_op_failed_types()}.
 
--type ofp_port_number() :: 0..16#ffffff00.
+-type ofp_port_number() :: 0..16#ffffff00. % 0-4,294,967,040 (32 bits)
 -type ofp_port_name() :: 'in_port' | 'table' | 'normal' | 'flood' | 'all' | 'controller' | 'local' | 'none'.
 -type ofp_port() :: ofp_port_name() | ofp_port_number().
 -type ofp_group() :: 0..16#ffffffff.

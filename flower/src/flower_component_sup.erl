@@ -20,6 +20,7 @@ start_link() ->
     supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 start_component(I) ->
+	io:format (">> Component started: ~p~n",[I]),
     supervisor:start_child(?MODULE, ?CHILD(I)).
 
 %% ===================================================================

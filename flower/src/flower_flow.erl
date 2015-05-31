@@ -31,6 +31,7 @@ decode_ethertype(EtherType, <<PCP:3/integer, _CFI:1/integer, VID:12/integer, Inn
   when EtherType == 16#8100;
        EtherType == 16#88a8 ->
     decode_ethertype(InnerEtherType, PayLoad, Flow#flow{tags = Tags ++ [{EtherType, PCP, VID}]});
+
 decode_ethertype(EtherType, PayLoad, Flow) when EtherType >= ?ETH_TYPE_MIN ->
     decode_payload(EtherType, PayLoad, Flow#flow{dl_type = EtherType, l3 = PayLoad});
 

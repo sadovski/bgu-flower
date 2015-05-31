@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>bgu-flower</name>
+	<name>flower_test</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -14,15 +14,4 @@
 	<natures>
 		<nature>org.erlide.core.erlnature</nature>
 	</natures>
-	<filteredResources>
-		<filter>
-			<id>1433077098166</id>
-			<name></name>
-			<type>9</type>
-			<matcher>
-				<id>org.eclipse.ui.ide.multiFilter</id>
-				<arguments>1.0-name-matches-false-false-flower</arguments>
-			</matcher>
-		</filter>
-	</filteredResources>
 </projectDescription>

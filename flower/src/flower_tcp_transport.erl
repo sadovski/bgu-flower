@@ -36,6 +36,7 @@
 %%%===================================================================
 
 %% start a TCP listener process on the given Port with Options
+%% no longer is in use
 listen(Port, Options) ->
     flower_sup:start_listener(?MODULE, {Port, Options}).
 
@@ -78,19 +79,18 @@ handle_accept(Sock, State) ->
 %%%===================================================================
 %%% AkivaS
 %%%===================================================================
-    io:format("~n ----->>flower_tcp_transport:handle_accept ~p",[State]),
     case inet:peername(Sock) of
         {ok,{IpAddress,Port}} ->
-          io:format("~n ----->>flower_tcp_transport:handle_accept Connection from ~p ~n",[{IpAddress, Port}]);
+			ok;
         {error,Why} ->
-          io:format("~n ----->>flower_tcp_transport:handle_accept Cannot get information about connection ~p ~n",[Why])
+          io:format(">> flower_tcp_transport:handle_accept Cannot get information about connection ~p~n",[Why])
     end,
 %%%===================================================================
 %%% AkivaS
 %%%===================================================================
-    case flower_datapath:start_connection(?MODULE) of
-	{ok, Pid} ->
-	    ok = gen_tcp:controlling_process(Sock, Pid),
+    case flower_datapath:start_connection(?MODULE) of % starts flower_datapath by adding it to datapath_sup and connecting it to this module
+	{ok, Pid} -> 
+	    ok = gen_tcp:controlling_process(Sock, Pid), % connecting the flower_datapath to the socket. it will handle all the packets to and from the switch 
 	    flower_datapath:accept(Pid, Sock);
 	_ ->
 	    error_logger:error_report([{event, accept_failed}]),
@@ -107,8 +107,7 @@ handle_cast(_Request, State) ->
 handle_info(_Info, State) ->
     {noreply, State}.
 
-terminate(Reason, _State) ->
-    ?DEBUG("flower_tcp_listener terminate on ~p", [Reason]),
+terminate(_Reason, _State) ->
     ok.
 
 code_change(_OldVsn, State, _Extra) ->

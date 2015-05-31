@@ -55,7 +55,6 @@ decode(<<Version:8/integer, Type:8/integer, Length:16/integer, Xid:32/integer,
     <<_Hdr:8/bytes, Msg:MsgLen/bytes, Rest/binary>> = Data,
     MType = ofpt(Type),
     M = decode_msg(MType, Msg),
-    ?DEBUG("decode got: ~p~n", [M]),
     decode(Rest, [#ovs_msg{version = Version, type = MType, xid = Xid, msg = M}|Acc]);
 
 decode(Rest, Acc) ->
@@ -65,10 +64,7 @@ encode(#ovs_msg{version = Version, type = Type, xid = Xid, msg = Msg}) ->
     Mtype = ofpt(Type),
     Data = encode_msg(Msg),
     Length = size(Data) + 8,
-    ?DEBUG("~p ~p ~p ~p ~p~n", [Version, Mtype, Length, Xid, Msg]),
-    R = <<Version:8, Mtype:8, Length:16, Xid:32, Data/binary>>,
-    ?DEBUG("Send: ~p~n", [R]),
-    R;
+    <<Version:8, Mtype:8, Length:16, Xid:32, Data/binary>>;
 
 encode(Msg) when is_list(Msg) ->
     encode(Msg, []).

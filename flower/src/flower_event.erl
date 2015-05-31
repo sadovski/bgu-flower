@@ -2,7 +2,6 @@
 
 -behaviour(regine_server).
 
-
 %% API
 -export([start_link/0]).
 -export([is_registered/1, register/1, unregister/1, terminate/1]).
@@ -18,10 +17,12 @@
 %%%===================================================================
 
 start_link() ->
-    regine_server:start_link({local, ?SERVER}, ?MODULE, []).
+	regine_server:start_link({local, ?SERVER}, ?MODULE, []).
+
 
 register(Event) ->
-    regine_server:register(?SERVER, self(), Event, undefined).
+	regine_server:register(?SERVER, self(), Event, undefined).
+
 
 unregister(Event) ->
     regine_server:unregister(?SERVER, Event, undefined).
@@ -37,7 +38,7 @@ terminate(Event) ->
 %%%===================================================================
 
 default_events() ->
-    [{datapath, join}, {datapath, leave}, {packet, in}, {flow, mod}, {flow, removed}, {port, status}, {port, stats}].
+    [features_reply, {datapath, leave}, {packet, in}, {flow, mod}, {flow, removed}, {port, status}, {port, stats}].
 
 init([]) ->
     Events = lists:foldl(fun(Event, Events) -> orddict:store(Event, self(), Events) end, orddict:new(), default_events()),

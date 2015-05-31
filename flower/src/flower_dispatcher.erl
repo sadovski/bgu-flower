@@ -33,7 +33,7 @@ delete(Event) ->
 dispatch(Event, Sw, Msg) ->
     Handlers = ets:lookup(?SERVER, Event),
     lists:foreach(fun({_Ev, Pid}) ->
-			  gen_server:cast(Pid, {Event, Sw, Msg})
+			  		gen_server:cast(Pid, {Event, Sw, Msg})
 		  end, Handlers).
 
 %%%===================================================================
@@ -42,7 +42,7 @@ dispatch(Event, Sw, Msg) ->
 
 init([]) ->
     process_flag(trap_exit, true),
-    ets:new(?SERVER, [bag, protected, named_table, {keypos, 1}]),
+    ets:new(?SERVER, [bag, protected, named_table]),
     {ok, #state{}}.
 
 handle_register(Pid, Event, Pid, State) ->
@@ -75,7 +75,6 @@ terminate(_Reason, _State) ->
 do_join(Events, Pid) when is_list(Events) ->
     [do_join(Event, Pid) || Event <- Events];
 do_join(Event, Pid) ->
-io:format("lower_dispatcher:do_join, Event ~p~n", [Event]),
     case flower_event:is_registered(Event) of
 	true ->
 	    ets:insert(?SERVER, {Event, Pid}),

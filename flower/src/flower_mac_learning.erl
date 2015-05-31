@@ -3,7 +3,7 @@
 -behaviour(gen_server).
 
 %% API
--export([start_link/0, insert/2, insert/3, lookup/1, lookup/2,
+-export([start_link/0, insert/2, insert/3, lookup/2,
 	 expire/0, may_learn/1, may_learn/2, eth_addr_is_reserved/1,
 	 dump/0]).
 
@@ -12,6 +12,7 @@
 	 terminate/2, code_change/3]).
 
 -define(SERVER, ?MODULE). 
+% each new MAC table entry gets an expiry time of 60 seconds.
 -define(MAC_ENTRY_IDLE_TIME, 60).
 
 -record(state, {
@@ -36,14 +37,12 @@ start_link() ->
 insert(MAC, Port) ->
     insert(MAC, 0, Port).
 
-insert(MAC, VLan, Port) ->
-    gen_server:call(?SERVER, {insert, MAC, VLan, Port}).
+insert(MAC, Switch, Port) ->
+    gen_server:call(?SERVER, {insert, MAC, Switch, Port}).
 
-lookup(MAC) ->
-    lookup(MAC, 0).
+lookup(MAC, Switch) ->
+    gen_server:call(?SERVER, {lookup, MAC,Switch}).
 
-lookup(MAC, VLan) ->
-    gen_server:call(?SERVER, {lookup, MAC, VLan}).
 
 dump() ->
     gen_server:call(?SERVER, {dump}).
@@ -51,6 +50,7 @@ dump() ->
 expire() ->
     gen_server:cast(?SERVER, expire).
 
+% Returns true if the MAC address is unicast (check bit #8) 
 may_learn(<<_:7, BCast:1, _/binary>> = _MAC) ->
     (BCast =/= 1).
 
@@ -97,6 +97,8 @@ eth_addr_is_reserved(_Addr) ->
 init([]) ->
     process_flag(trap_exit, true),
     LRU = lrulist:new(),
+	% start a timer that repeatedly calls 'expire' at intervals of X
+	% returns a timer reference
     {ok, Timer} = timer:apply_interval(1000, ?MODULE, expire, []),
     {ok, #state{timer = Timer, lru = LRU}}.
 
@@ -114,24 +116,27 @@ init([]) ->
 %%                                   {stop, Reason, State}
 %% @end
 %%--------------------------------------------------------------------
-handle_call({insert, MAC, VLan, Port}, _From, #state{lru = LRU} = State) ->
-    {Result, LRU0} =  lrulist:get({MAC, VLan}, LRU),
+handle_call({insert, MAC, Switch, Port}, _From, #state{lru = LRU} = State) ->
+	% get the port asociated with this MAC and VLAN. 'none' if there isn't a match
+    {Result, LRU0} =  lrulist:get({MAC,Switch}, LRU),
     {Reply, LRU1} = case Result of
 			none ->
-			    {ok, NewLRU} = lrulist:insert({MAC, VLan}, Port, LRU0, [{slidingexpire, ?MAC_ENTRY_IDLE_TIME}]),
+			    {ok, NewLRU} = lrulist:insert({MAC,Switch}, Port, LRU0, [{slidingexpire, ?MAC_ENTRY_IDLE_TIME}]),
 			    {new, NewLRU};
 			{ok, Data} ->
 			    if (Data =/= Port) ->
-				    {ok, NewLRU} = lrulist:insert({MAC, VLan}, Port, LRU0, [{slidingexpire, ?MAC_ENTRY_IDLE_TIME}]),
+				    {ok, NewLRU} = lrulist:insert({MAC,Switch}, Port, LRU0, [{slidingexpire, ?MAC_ENTRY_IDLE_TIME}]),
 				    {updated, NewLRU};
 			       true ->
-				    {ok, LRU0}
+						% we DO NOT need to update the expiry date on this entry
+						% the function lrulist:get does that for us.
+					   {ok, LRU0}
 			    end
 		    end,
     {reply, Reply, State#state{lru = LRU1}};
 
-handle_call({lookup, MAC, VLan}, _From, #state{lru = LRU} = State) ->
-    {Result, LRU0} =  lrulist:peek({MAC, VLan}, LRU),
+handle_call({lookup, MAC, Switch}, _From, #state{lru = LRU} = State) ->
+    {Result, LRU0} =  lrulist:peek({MAC, Switch}, LRU),
     {reply, Result, State#state{lru = LRU0}};
 
 handle_call({dump}, _From, #state{lru = LRU} = State) ->

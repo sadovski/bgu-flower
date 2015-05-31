@@ -1,0 +1,26 @@
+18:14:42,268 I: (ErlangCore.java:64) : Starting CORE Thread[Worker-2,5,main]
+18:14:42,274 I: (ErlangCore.java:79) : *** starting Erlide v0.29.11.201502161407 (core=0.24.12.201502161407) (model api=0.24.11.201502161407) *** (UTF-8) ui
+18:14:42,280 I: (ErlangCore.java:86) : Started CORE
+18:14:42,281 F: (ErlangPlugin.java:88) : Core started
+18:14:44,035 F: (ErlangHostnameRetriever.java:40) : Test long hostname: null
+18:14:44,036 W: (ErlangHostnameRetriever.java:46) : Can't use null as long name
+18:14:45,290 F: (ErlangHostnameRetriever.java:40) : Test long hostname: ubuntu
+18:14:46,376 W: (ErlangHostnameRetriever.java:46) : Can't use ubuntu as long name
+18:14:47,176 F: (ErlangHostnameRetriever.java:40) : Test short hostname: ubuntu
+18:14:47,214 F: (HostnameUtils.java:74) : Detected:: ubuntu && null
+18:14:47,237 F: (BackendActivator.java:25) : Backend plugin started
+18:14:47,239 I: (ErlideUIPlugin.java:130) : Starting UI Thread[Worker-2,5,main]
+18:14:47,243 F: (ModelActivator.java:19) : Starting Erlang model api
+18:14:47,264 F: (BackendFactory.java:42) : Create ide backend 17.4.0
+18:14:47,266 F: (BackendFactory.java:56) : Create backend 74c56_amir_2ba9dc_erlide
+18:14:47,519 F: (OtpNodeProxy.java:302) : Runtime 74c56_amir_2ba9dc_erlide@ubuntu starting
+18:14:47,525 F: (OtpNodeProxy.java:420) : START node :> [/usr/lib/erlang/bin/erl, -sname, 74c56_amir_2ba9dc_erlide@ubuntu, -setcookie, erlide] *** /home/amir/Dropbox/Documents/SDN_project/flower
+18:14:47,636 F: (OtpNodeProxy.java:213) : 74c56_amir_2ba9dc_erlide@ubuntu: waiting connection to peer... 
+18:14:48,050 F: (OtpNodeProxy.java:220) : connected!
+18:14:48,290 F: (OtpNodeProxy.java:307) : Runtime 74c56_amir_2ba9dc_erlide@ubuntu running
+18:14:48,291 F: (LogEventHandler.java:27) : info: {"Monitoring java node",jerlide_32bab11@ubuntu}
+18:14:48,293 F: (LogEventHandler.java:27) : info: {"Start monitor process: ",10000000,50000000}
+18:14:48,688 F: (ModelActivator.java:30) : Started model api
+18:14:48,699 I: (ErlideUIPlugin.java:152) : Started UI
+18:17:39,376 F: (OtpNodeProxy.java:312) : Runtime 74c56_amir_2ba9dc_erlide@ubuntu stopping
+18:17:39,452 F: (OtpNodeProxy.java:272) : Runtime 74c56_amir_2ba9dc_erlide@ubuntu terminated

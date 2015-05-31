@@ -57,10 +57,11 @@ ofp_matchflow({nw_src_mask, Mask}, Match, Flow) ->
 ofp_matchflow({nw_dst_mask, Mask}, Match, Flow) ->
     ofp_match({nw_dst_mask, Flow#flow.nw_dst, Mask}, Match).
 
+%% MatchSpec is a list of flow parameters (dl_src, nw_proto etc...)
 -spec encode_ofp_matchflow(list(term()), flow()) -> ofp_match().
 encode_ofp_matchflow(MatchSpec, Flow) ->
     lists:foldl(fun(MatchRule, Match) -> ofp_matchflow(MatchRule, Match, Flow) end, #ofp_match{wildcards = ?OFPFW_ALL}, MatchSpec).
-
+%               fun(Element  , AccuIn                 flow_param,ofp_match record,Flow
 ofp_vlan_match(#ofp_match{wildcards = Wildcards} = Match, vid, DlVID)  ->
     Match#ofp_match{wildcards = Wildcards band (bnot ?OFPFW_DL_VLAN), dl_vlan = DlVID};
 ofp_vlan_match(#ofp_match{wildcards = Wildcards} = Match, pcp, DlPCP) ->
