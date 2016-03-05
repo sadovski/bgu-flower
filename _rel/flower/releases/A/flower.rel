@@ -1,0 +1,8 @@
+{release,{"flower","A"},
+         {erts,"7.0"},
+         [{stdlib,"2.5"},
+          {kernel,"4.0"},
+          {gen_listener_tcp,"0.3.0.1~fb9626d"},
+          {regine,"0.2.1.0~ce13c37"},
+          {flower,"1.0.0"},
+          {vrrpd_mon,"1.0.0"}]}. 

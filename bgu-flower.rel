@@ -1,0 +1,11 @@
+{release,
+ {"flower", "A"},
+ {erts, "7.0"},
+ [{kernel, "4.0"},
+  {stdlib, "2.5"},
+  {sasl, "2.5"},
+  {gen_listener_tcp, "0.3.0.1~fb9626d"},
+  {flower, "1.0.0"},
+  {regine, "0.2.1.0~ce13c37"},
+  {vrrpd_mon, "1.0.0"}]
+}.

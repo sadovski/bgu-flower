@@ -9,9 +9,36 @@ flower_tcp_transport:listen(6633,[]).
 
 
 =======================================
-erl -smp -sname SDN -pa ebin/
+from bgu-flower directory  (see ERL_LIBS environment var):
+erl -smp -sname SDN
 =======================================
 sudo mn --controller=remote,ip=192.168.0.102,port=6633
 
 sudo mn --topo=tree,depth=2,fanout=8 --controller=remote,ip=192.168.0.102,port=6633
 
+
+================================
+run VRRPD:
+sudo ./vrrpd -n -i eth0 -v 200 -p 10 192.168.0.200
+================================
+
+How to start everything by single shell command:
+
+erl -sname SDN -boot ./bgu-flower -config ./bgu-flower.config
+
+erl -sname SDN -boot ./bgu-flower -config ./bgu-flower.config -run flower_simple_switch start_link
+
+or if you do not  need the shell:
+
+erl -sname SDN -boot ./bgu-flower -config ./bgu-flower.config -detached
+
+To connect to detached node use shell command:
+
+erl -sname Monitor  -remsh SDN@lubuntu-VirtualBox
+
+===============================
+
+systools:make_tar("bgu-flower", [{erts, code:root_dir()}]).
+
+
+_rel/flower/bin/flower console

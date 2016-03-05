@@ -1,0 +1,26 @@
+
+=====
+===== LOGGING STARTED Wed Feb 17 16:45:40 IST 2016
+=====
+Exec: /home/akivas/bgu-flower/_rel/flower/erts-7.0/bin/erlexec -boot /home/akivas/bgu-flower/_rel/flower/releases/A/flower -mode embedded -boot_var ERTS_LIB_DIR /home/akivas/bgu-flower/_rel/flower/erts-7.0/../lib -config /home/akivas/bgu-flower/_rel/flower/releases/A/sys.config -args_file /home/akivas/bgu-flower/_rel/flower/releases/A/vm.args -- console
+Root: /home/akivas/bgu-flower/_rel/flower
+/home/akivas/bgu-flower/_rel/flower
+Erlang/OTP 18 [erts-7.0] [source-4d83b58] [64-bit] [smp:2:2] [async-threads:10] [hipe] [kernel-poll:false]
+
+
+=INFO REPORT==== 17-Feb-2016::16:45:41 ===
+    application: vrrpd_mon
+    exited: {bad_return,
+                {{vrrpd_mon,start,[normal,[]]},
+                 {'EXIT',
+                     {undef,
+                         [{vrrpd_mon,start,[normal,[]],[]},
+                          {application_master,start_it_old,4,
+                              [{file,"application_master.erl"},
+                               {line,273}]}]}}}}
+    type: permanent
+Eshell V7.0  (abort with ^G)
+(flower@lubuntu-VirtualBox)1> {"Kernel pid terminated",application_controller,"{application_start_failure,vrrpd_mon,{bad_return,{{vrrpd_mon,start,[normal,[]]},{'EXIT',{undef,[{vrrpd_mon,start,[normal,[]],[]},{application_master,start_it_old,4,[{file,\"application_master.erl\"},{line,273}]}]}}}}}"}
+
+Crash dump is being written to: erl_crash.dump...done
+Kernel pid terminated (application_controller) ({application_start_failure,vrrpd_mon,{bad_return,{{vrrpd_mon,start,[normal,[]]},{'EXIT',{undef,[{vrrpd_mon,start,[normal,[]],[]},{application_master,s

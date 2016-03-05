@@ -1,5 +1,5 @@
 {application, flower,[
-  {description, "FlowEr: an SDN controller, written in perry."},
+  {description, "FlowEr: an SDN controller, written in Erlang."},
   {vsn, "1.0.0"},
   {registered, []},
   {applications, [
